@@ -6,7 +6,7 @@
     <keywords>cordova,ibm,worklight,mobilefirst,mfp</keywords>
     <issue>https://www.ibm.com/support</issue>
     <engines>
-        <engine name="cordova-android" version="&gt;=6.1.2 &lt;9" />
+        <engine name="cordova-android" version="&gt;=6.1.2 &lt;10" />
         <engine name="cordova-ios" version="&gt;=4.1.1 &lt;7" />
         <engine name="cordova-windows" version="&gt;=4.3.2 &lt;8" />
         <engine name="cordova-plugman" version="&gt;=6.1.1 &lt;10" />
