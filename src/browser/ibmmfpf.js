@@ -3401,6 +3401,24 @@ var __WLUtils = function () {
         return dfd.promise();
     }
 
+	//Helper function to check if file is present in the given location or not
+    function checkForFile(path) {
+        var dfd = WLJQ.Deferred();
+        var xobj = new XMLHttpRequest();
+        xobj.open('GET', path, true);
+        xobj.onreadystatechange = function () {
+            if (xobj.readyState == 4) {
+                if(xobj.status == "200") {
+                    dfd.resolve();
+                } else {
+                    dfd.reject();
+                }
+            }
+        };
+        xobj.send(null);
+        return dfd.promise();
+    }
+
     function addScript(url) {
         var sdkPath = findSDKPath(IBMMFPF_SDK_NAME);
         var script   = document.createElement("script");
@@ -3448,12 +3466,28 @@ var __WLUtils = function () {
 
     this.loadLibrary = function(libPath, amdCallback){
         var sdkPath = findSDKPath(IBMMFPF_SDK_NAME);
-        if (('function' === typeof define) && (define['amd'])) /* AMD Support */
-        {
-          require([sdkPath+libPath], amdCallback);
-        } else {
-          addScript(libPath);
-        }
+
+        var path = sdkPath+libPath;
+        /*For wi 119215 - dependent plugins jssha,sjcl and promiz are being installed into a web app's node_modues folder with newer node versions. 
+	Our build systems though still use older node versions hence the check to see if the dependencies are present in the  
+	<web-app/node_modules/ibm-mfp-web-sdk/node_modules> folder(for older node versions), if not then load the files from the <web-app/node_modules> 
+	folder*/
+        checkForFile(sdkPath+libPath.replace("node_modules",".."))
+        .then(function(msg){
+            libPath = libPath.replace("node_modules","..");
+            path = sdkPath+libPath; 
+            if (('function' === typeof define) && (define['amd'])){
+                require([path], amdCallback); 
+            } else {
+                addScript(libPath);
+            }
+        },function(error){
+        	if (('function' === typeof define) && (define['amd'])){
+			    require([path], amdCallback); 
+		} else {
+                	addScript(libPath);
+		}
+        });
     }
 
     var __deviceLocale;
@@ -4734,12 +4768,7 @@ WLAuthorizationManager = (function () {
                     // Get Analytics information from response
                     var responseJson = response._getResponseJSON();
                     var analyticsURL = responseJson.AnalyticsURL;
-                    var analyticsUserName = responseJson.AnalyticsUserName;
-                    var analyticsUserPassword = responseJson.AnalyticsUserPassword;
                     __setAnalyticsURL(analyticsURL);
-                    __setAnalyticsUserName(analyticsUserName);
-                    __setAnalyticsUserPassword(analyticsUserPassword);
-
                     processClientInstanceCallbacks(response, true);
                 }
                 else{
@@ -4973,20 +5002,6 @@ WLAuthorizationManager = (function () {
         WL.DAO.setItem(analyticsURLKey, id);
     };
 
-    var __setAnalyticsUserPassword = function (id) {
-        if(!id) {
-            WL.DAO.removeItem(analyticsUserPasswordKey);
-        }
-        WL.DAO.setItem(analyticsUserPasswordKey, id);
-    };
-
-    var __setAnalyticsUserName = function (id) {
-        if(!id) {
-            WL.DAO.removeItem(analyticsUserNameKey);
-        }
-        WL.DAO.setItem(analyticsUserNameKey, id);
-    };
-
     var __setAnalyticsApiKey = function (id) {
         if(!id) {
             WL.DAO.removeItem(analyticsApiKey);
@@ -5031,8 +5046,6 @@ WLAuthorizationManager = (function () {
 
         //Remove Analytics data
         __setAnalyticsURL(null);
-        __setAnalyticsUserName(null);
-        __setAnalyticsUserPassword(null);
         __setAnalyticsApiKey(null);
 
         // Remove keypair
@@ -6222,7 +6235,8 @@ WLResourceRequest = function (_url, _method, _options) {
     var currentResourceRequest = this;
     currentResourceRequest.scope = null;
     var MAX_CONFLICT_ATTEMPTS = 7;
-    var useAPIProxy = false; 
+    var backendServiceName = null;
+    var BACKEND_SERVICE = '/backendservice/';
 
 
     /* support timeout given as 3rd parameter for backward compatibility */
@@ -6231,7 +6245,9 @@ WLResourceRequest = function (_url, _method, _options) {
     } else {
         if (!isUndefinedOrNull(_options) && !isUndefinedOrNull(_options.timeout)) { timeout = _options.timeout;}
         if (!isUndefinedOrNull(_options) && !isUndefinedOrNull(_options.scope)) { currentResourceRequest.scope = _options.scope;}
-        if (!isUndefinedOrNull(_options) && !isUndefinedOrNull(_options.useAPIProxy)) { currentResourceRequest.useAPIProxy = _options.useAPIProxy;}
+        if (!isUndefinedOrNull(_options) && !isUndefinedOrNull(_options.backendServiceName)) {
+            backendServiceName = _options.backendServiceName;
+        }
     }
 
     /**
@@ -6750,21 +6766,30 @@ WLResourceRequest = function (_url, _method, _options) {
 
     function buildRequestUrl() {
         if (url.indexOf('http:') >= 0 || url.indexOf('https:') >= 0) {
+            /* Absolute URL - the backendServiceName needs a relative URL */
+            if ( backendServiceName !== null){
+                dfd.reject('The backendServiceName option can only be used with a relative URL ');
+            }
             return url;
         } else {
             var serverUrl = WL.Config.__getBaseURL();
-            if (currentResourceRequest.useAPIProxy) {
-                apiProxyUrl = '/adapters/MobileAPIProxy' ;
-                serverUrl  = serverUrl + apiProxyUrl;
+            if (backendServiceName !== null){
+                if (backendServiceName.startsWith("/")){
+                    backendServiceName = backendServiceName.slice(1,backendServiceName.length);
+                }
+                serverUrl = serverUrl+ BACKEND_SERVICE + backendServiceName;
             }
             return __buildUrl(serverUrl);
         }
 
         function __buildUrl(serverUrl) {
-            if (serverUrl[serverUrl.length - 1] !== '/' && url[0] !== '/') {
+            if (serverUrl[serverUrl.length - 1] !== '/' && url[0] !== '/' && url.length!==0) {
                 serverUrl += '/';
-            } else if (serverUrl[serverUrl.length - 1] === '/' && url[0] === '/') {
+            } else if (serverUrl[serverUrl.length - 1] === '/' && (url[0] === '/' || url.length===0)) {
                 serverUrl = serverUrl.substring(0, serverUrl.length - 1);
+            }
+            if(url[url.length-1]==='/'){
+                url = url.substring(0, url.length - 1);
             }
             return serverUrl + url;
         }

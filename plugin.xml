@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin id="cordova-plugin-mfp" version="8.0.2020052707" xmlns="http://apache.org/cordova/ns/plugins/1.0">
+<plugin id="cordova-plugin-mfp" version="8.0.2020081211" xmlns="http://apache.org/cordova/ns/plugins/1.0">
     <name>IBM MobileFirst Platform Foundation</name>
     <description>IBM MobileFirst Platform Foundation Cordova Plugin</description>
     <license>IBM</license>

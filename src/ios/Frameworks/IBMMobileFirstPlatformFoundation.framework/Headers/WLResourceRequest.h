@@ -129,6 +129,8 @@ extern NSString * const WLHttpMethodDelete;
 /**
  * Constructs a new resource request with the specified URL, using the specified HTTP method.
  * Additionally this constructor sets a custom expiration period (timeout) for the request.
+ * <p>The WLResourceRequest API can be used to allow mobile apps access to microservices hosted outside of Mobile Foundatione. 
+ * Mobile Foundation facilitates secure calls to microservice or enterprise backend service without involving adapters though Mobile Foundation API Connector.</p>
  * <p>To access a <code>microservice URL</code> such as "http://mybluemix.net/resorts/cities" and the Mobile Foundation runtime backend service is configured as follows</p>
  * {
  *    "service": "resorts",
