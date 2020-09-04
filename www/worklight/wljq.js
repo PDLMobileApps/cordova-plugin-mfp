@@ -6181,6 +6181,8 @@ jQuery.fn.extend({
 				( jQuery.support.leadingWhitespace || !rleadingWhitespace.test( value ) ) &&
 				!wrapMap[ ( rtagName.exec( value ) || ["", ""] )[1].toLowerCase() ] ) {
 
+				value = value.replace( rxhtmlTag, "<$1></$2>" );
+
 				try {
 					for (; i < l; i++ ) {
 						// Remove element nodes and prevent memory leaks
@@ -6626,11 +6628,11 @@ jQuery.extend({
 					// Support for Windows 8 and Windows Phone 8 
 					if (typeof(MSApp) !== "undefined" && typeof(MSApp.execUnsafeLocalFunction) !== "undefined") {
 					    MSApp.execUnsafeLocalFunction(function(){
-					    	tmp.innerHTML = wrap[1] + elem + wrap[2];
+					    	tmp.innerHTML = wrap[1] + elem.replace( rxhtmlTag, "<$1></$2>" ) + wrap[2];
 					    });
 					} 
 					else {
-						tmp.innerHTML = wrap[1] + elem + wrap[2]; 
+						tmp.innerHTML = wrap[1] + elem.replace( rxhtmlTag, "<$1></$2>" ) + wrap[2]; 
 					}
 
 					// Descend through wrappers to the right content

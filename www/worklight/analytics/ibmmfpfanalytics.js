@@ -26,7 +26,6 @@
 	/////////////////////////// logger
 
         REQ_SEND_LOGS = '/api/loguploader',
-        REQ_SEND_LOGS_RECEIVER = '/v1/loguploader',
         REQ_UPDATE_CONFIG = '/api/clientLogProfile',
         KEY_LOCAL_STORAGE_LOGS = '__WL_WEBLOG_LOGS__',
         KEY_LOCAL_STORAGE_SWAP = '__WL_WEBLOG_SWAP__',
@@ -166,100 +165,22 @@
              console.log('analytics: There are no persisted logs to send.');
              resolve('There were no persisted logs to send');
              return;
-		}
-
-             var analyticsUrl = null;
-             try {
-                        analyticsUrl = analyticsLocalStorage.getItem(analyticsURLKey);
-             }catch(e){
-                    // Do nothing
-                    console.log('analytics: Failed to get analyticsUrl : ' + e.toString());
-             }
-
-             var sendlogSuccess = function(response){
-                        //logInboundForSendResponse(response[0]);
-                        if(analyticsUrl != null && !analyticsUrl.includes('analytics-receiver')){
-                               emptyLogs(keys);
-                        }
-                        console.log('analytics: Client logs successfully sent to the server');
-                        resolve('Log was successfully sent');
-              };
-
-		var sendLogError = function(err) {
-			console.error('analytics: Call failed, server returned: ' , (err ? err.statusText : ""));
-			reject('analytics: Call failed, server returned: ' + (err ? err.statusText : ""));
-		};
-
-		if(analyticsUrl != null && analyticsUrl.includes('analytics-receiver')){
-                        try {
-			           reqUrl = analyticsUrl.replace(/['"]+/g, '') + REQ_SEND_LOGS_RECEIVER;
-			           __receiverSendAjax(data, reqUrl, keys)
-				          .then(sendlogSuccess,sendLogError);
-                        }catch(e){
-                               console.error('analytics: Failed to log event due to exception: ' + e.toString());
-                        }
-		} else {
-		   __ajax(data, REQ_SEND_LOGS)
-				.then(sendlogSuccess, sendLogError);
-		 }
+        }
+                		
+		__ajax(data, REQ_SEND_LOGS)
+			.then(function (response) {
+				emptyLogs(keys);
+				//logInboundForSendResponse(response[0]);
+				console.log('analytics: Client logs successfully sent to the server');
+				resolve('Log was successfully sent');
+			})
+			.catch(function (err) {
+			  console.error('analytics: Call failed, server returned: ' , err.statusText);
+			  reject('analytics: Call failed, server returned: ' + err.statusText);
+			});
 	  	});
-    };
-
-	var __receiverSendAjax = function(data,reqUrl,keys) {
-
-		return new Promise(function (resolve, reject) {
-			var _options = {} ;
-			_options.scope = "receiver.mobileclient";
-			var xhr = new WLResourceRequest(reqUrl, WLResourceRequest.POST, _options);
-			xhr.setHeader("Content-Type", "text/plain");
-
-			function onLogSendSuccess(transport) {
-				if(transport.status >= 200 && transport.status < 300){
-					emptyLogs(keys);
-					//commented intentionally to avoid sending network metrics for loguploader
-					//logInboundResponse(xhr);
-					console.log('analytics: Call issued to ' + reqUrl);
-					resolve([xhr.networkMetadata, transport.responseText]);
-				} else {
-					reject({
-						status: transport.status,
-						statusText: transport.responseText
-					});
-				}
-			};
-
-			function onLogSendFailure(transport) {
-				reject({
-					status: transport.errorCode,
-					statusText: transport.responseText
-				});
-			};
-
-			function sendAnalyticsData() {
-				var track = logOutboundRequest(xhr);
-				if (track) {
-					var duration = new Date().getTime() - startupTime;
-					if (isNewSession()) {
-						logAnalyticsSessionStart();
-					}
-					else if (duration > 1800000) {
-						logAnalyticsSessionStop();
-					}
-					if (clientId != "") {
-						metadataHeader.clientID = clientId;
-					}
-					startupTime = new Date().getTime();
-					xhr.setHeader("x-wl-analytics-tracking-id", xhr.trackingId);
-					xhr.setHeader("x-mfp-analytics-metadata", JSON.stringify(metadataHeader));
-				}
-				xhr.send(data).then(
-					onLogSendSuccess,
-					onLogSendFailure
-				);
-			};
-			sendAnalyticsData();
-		});
-	};
+    	  
+      };
 
 	  var __ajax = function(data,path,method) {
     	  
@@ -269,7 +190,19 @@
 				method = 'POST'
 			}
 			var reqUrl = metadataHeader.contextRoot + path;
-			xhr.open(method, metadataHeader.contextRoot+path,true);
+                        var analyticsUrl = analyticsLocalStorage.getItem(analyticsURLKey);
+                        if(path.endsWith('loguploader') && analyticsUrl != null && analyticsUrl.includes('analytics-receiver')){
+                                reqUrl = analyticsUrl.replace(/['"]+/g, '') + "/v1/loguploader";
+                                xhr.open(method, reqUrl,true);
+
+                                var analyticsUser = analyticsLocalStorage.getItem(analyticsUserNameKey);
+                                var analyticsPassword = analyticsLocalStorage.getItem(analyticsUserPasswordKey);
+                                var base64Encoded = window.btoa(analyticsUser.replace(/['"]+/g, '') + ":" + analyticsPassword.replace(/['"]+/g, '')).toString('base64');
+
+                                xhr.setRequestHeader('Authorization','Basic ' + base64Encoded);
+                        } else {
+                                xhr.open(method, metadataHeader.contextRoot+path,true);
+                        }
 
 			xhr.onload = function () {
 			  if (this.status >= 200 && this.status < 300) {
@@ -290,7 +223,9 @@
 
 			  function sendAnalyticsData() {
 
-				  if (!state.allDomains && (!metadataHeader.contextRoot || reqUrl.indexOf(metadataHeader.contextRoot) == -1)) {
+                                  if(reqUrl.endsWith('loguploader') && reqUrl.includes('analytics-receiver')){
+                                          // Do nothing
+                                  } else if (!state.allDomains && (!metadataHeader.contextRoot || reqUrl.indexOf(metadataHeader.contextRoot) == -1)) {
 					  xhr.send(data);
 					  return;
 				  }
@@ -416,10 +351,7 @@
 						metadata['$responseCode'] = request.status;
 						var method = null;
 						if(request.requestOptions != null){
-							 method = request.requestOptions.method;
-						}
-						if(method == null) { // Receiver: If request is WLResourceRequest
-							method = request.getMethod();
+							 var method = request.requestOptions.method;
 						}
 						metadata['$requestMethod'] = method;
 						metadata['$path'] = request.responseURL;

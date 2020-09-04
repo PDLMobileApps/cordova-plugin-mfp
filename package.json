@@ -1,28 +1,28 @@
 {
-  "_from": "cordova-plugin-mfp@8.0.2020081211",
-  "_id": "cordova-plugin-mfp@8.0.2020081211",
+  "_from": "cordova-plugin-mfp@8.0.2020052707",
+  "_id": "cordova-plugin-mfp@8.0.2020052707",
   "_inBundle": false,
-  "_integrity": "sha512-cZsWJ6BS4WIg+F1+H+mQHEfD+QAi03kpDqQisM06lxptClWtpswqUfcWK+j2vk+gx+gC8HsoBBZyZfp0MUVjaA==",
+  "_integrity": "sha512-UOI+A+nLSFZxb5q0NDqfX7SeayX+Z26O25/afHYhy/DR1HkfL3oBORhyI6iPreZknrvuS8mYRdSM5V9YgAgZIA==",
   "_location": "/cordova-plugin-mfp",
   "_phantomChildren": {},
   "_requested": {
     "type": "version",
     "registry": true,
-    "raw": "cordova-plugin-mfp@8.0.2020081211",
+    "raw": "cordova-plugin-mfp@8.0.2020052707",
     "name": "cordova-plugin-mfp",
     "escapedName": "cordova-plugin-mfp",
-    "rawSpec": "8.0.2020081211",
+    "rawSpec": "8.0.2020052707",
     "saveSpec": null,
-    "fetchSpec": "8.0.2020081211"
+    "fetchSpec": "8.0.2020052707"
   },
   "_requiredBy": [
     "#DEV:/",
     "#USER"
   ],
-  "_resolved": "https://registry.npmjs.org/cordova-plugin-mfp/-/cordova-plugin-mfp-8.0.2020081211.tgz",
-  "_shasum": "b6aba3265eef01404c8290601df98f244ad04ffd",
-  "_spec": "cordova-plugin-mfp@8.0.2020081211",
-  "_where": "/Users/1579542/Desktop/FL_Projects/mobile/cordova-upgrade/flma/DelhaizefoodLionApp",
+  "_resolved": "https://registry.npmjs.org/cordova-plugin-mfp/-/cordova-plugin-mfp-8.0.2020052707.tgz",
+  "_shasum": "35b9e02e7d5c6a6e1dc74f637c7ed9fc7a98b257",
+  "_spec": "cordova-plugin-mfp@8.0.2020052707",
+  "_where": "/Users/1539722/Code/hf-wrapper/hma",
   "author": {
     "name": "IBM"
   },
@@ -56,7 +56,7 @@
     ]
   },
   "dependencies": {
-    "archiver": "4.0.2",
+    "archiver": "0.20.0",
     "cordova-serve": "^1.0.0",
     "crc": "^3.4.0",
     "elementtree": "0.1.6",
@@ -113,5 +113,5 @@
     "type": "git",
     "url": "https://git.ng.bluemix.net/ibmmfpf/cordova-plugin-mfp/tree/master"
   },
-  "version": "8.0.2020081211"
+  "version": "8.0.2020052707"
 }

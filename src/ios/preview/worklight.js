@@ -10790,15 +10790,11 @@ WL.__DirectUpdateManager = (function() {
 
 	function startUpdate(data, listener) {
 		var _this = this;
-		if(typeof data.DirectUpdateProtocolVersion == "undefined") {
-			// No protocol version is set in the server. Manually setting it to v1.
-			data.DirectUpdateProtocolVersion = "v1";
-		}
 
 		cordova.exec(onDirectUpdateSuccess, function(result){
 			onDirectUpdateFailure.call(_this, result);
 		},
-				"WLDirectUpdatePlugin", "start", [ data.checksum, data.packedSize, data.unpackedSize, data.directUpdateLink, data.DirectUpdateProtocolVersion]);
+				"WLDirectUpdatePlugin", "start", [ data.checksum,data.packedSize, data.unpackedSize,data.directUpdateLink ]);
 
 		function onDirectUpdateSuccess(result) {
 			logger.trace('DirectUpdateManager.startUpdate.onDirectUpdateSuccess: ' + JSON.stringify(result));
