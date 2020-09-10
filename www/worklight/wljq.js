@@ -1611,6 +1611,12 @@ jQuery.support = (function() {
 	// Null elements to avoid leaks in IE
 	all = select = fragment = opt = a = input = null;
 
+	// Support: IE <=9 only
+	// IE <=9 replaces <option> tags with their contents when inserted outside of
+	// the select element.
+	div.innerHTML = "<option></option>";
+	support.option = !!div.lastChild;
+
 	return support;
 })();
 
@@ -5980,7 +5986,6 @@ var nodeNames = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figca
 
 	// We have to close these tags to support XHTML (#13200)
 	wrapMap = {
-		option: [ 1, "<select multiple='multiple'>", "</select>" ],
 		legend: [ 1, "<fieldset>", "</fieldset>" ],
 		area: [ 1, "<map>", "</map>" ],
 		param: [ 1, "<object>", "</object>" ],
@@ -5996,10 +6001,14 @@ var nodeNames = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figca
 	safeFragment = createSafeFragment( document ),
 	fragmentDiv = safeFragment.appendChild( document.createElement("div") );
 
-wrapMap.optgroup = wrapMap.option;
+
 wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
 wrapMap.th = wrapMap.td;
 
+// Support: IE <=9 only
+if ( !jQuery.support.option ) {
+	wrapMap.optgroup = wrapMap.option = [ 1, "<select multiple='multiple'>", "</select>" ];
+}
 jQuery.fn.extend({
 	text: function( value ) {
 		return jQuery.access( this, function( value ) {
@@ -6180,8 +6189,6 @@ jQuery.fn.extend({
 				( jQuery.support.htmlSerialize || !rnoshimcache.test( value )  ) &&
 				( jQuery.support.leadingWhitespace || !rleadingWhitespace.test( value ) ) &&
 				!wrapMap[ ( rtagName.exec( value ) || ["", ""] )[1].toLowerCase() ] ) {
-
-				value = value.replace( rxhtmlTag, "<$1></$2>" );
 
 				try {
 					for (; i < l; i++ ) {
@@ -6628,11 +6635,11 @@ jQuery.extend({
 					// Support for Windows 8 and Windows Phone 8 
 					if (typeof(MSApp) !== "undefined" && typeof(MSApp.execUnsafeLocalFunction) !== "undefined") {
 					    MSApp.execUnsafeLocalFunction(function(){
-					    	tmp.innerHTML = wrap[1] + elem.replace( rxhtmlTag, "<$1></$2>" ) + wrap[2];
+					    	tmp.innerHTML = wrap[1] + elem + wrap[2];
 					    });
 					} 
 					else {
-						tmp.innerHTML = wrap[1] + elem.replace( rxhtmlTag, "<$1></$2>" ) + wrap[2]; 
+						tmp.innerHTML = wrap[1] + elem + wrap[2]; 
 					}
 
 					// Descend through wrappers to the right content

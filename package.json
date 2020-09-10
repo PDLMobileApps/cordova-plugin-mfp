@@ -1,28 +1,40 @@
 {
-  "_from": "cordova-plugin-mfp@8.0.2020052707",
-  "_id": "cordova-plugin-mfp@8.0.2020052707",
+  "_from": "cordova-plugin-mfp@8.0.2020090704",
+  "_id": "cordova-plugin-mfp@8.0.2020090704",
   "_inBundle": false,
-  "_integrity": "sha512-UOI+A+nLSFZxb5q0NDqfX7SeayX+Z26O25/afHYhy/DR1HkfL3oBORhyI6iPreZknrvuS8mYRdSM5V9YgAgZIA==",
+  "_integrity": "sha512-uvWhoS2SW/hrnTFI+yjCmz+LKtekeZB1MxCh7Q78ORvGDRji2Q0Ypfa/qYRcLFl3H3reJqJon4lVfz2vhIYPqA==",
   "_location": "/cordova-plugin-mfp",
-  "_phantomChildren": {},
+  "_phantomChildren": {
+    "archiver-utils": "2.1.0",
+    "async": "3.2.0",
+    "fs.realpath": "1.0.0",
+    "inflight": "1.0.6",
+    "inherits": "2.0.4",
+    "minimatch": "3.0.4",
+    "once": "1.4.0",
+    "path-is-absolute": "1.0.1",
+    "readable-stream": "3.6.0",
+    "tar-stream": "2.1.4",
+    "zip-stream": "3.0.1"
+  },
   "_requested": {
     "type": "version",
     "registry": true,
-    "raw": "cordova-plugin-mfp@8.0.2020052707",
+    "raw": "cordova-plugin-mfp@8.0.2020090704",
     "name": "cordova-plugin-mfp",
     "escapedName": "cordova-plugin-mfp",
-    "rawSpec": "8.0.2020052707",
+    "rawSpec": "8.0.2020090704",
     "saveSpec": null,
-    "fetchSpec": "8.0.2020052707"
+    "fetchSpec": "8.0.2020090704"
   },
   "_requiredBy": [
     "#DEV:/",
     "#USER"
   ],
-  "_resolved": "https://registry.npmjs.org/cordova-plugin-mfp/-/cordova-plugin-mfp-8.0.2020052707.tgz",
-  "_shasum": "35b9e02e7d5c6a6e1dc74f637c7ed9fc7a98b257",
-  "_spec": "cordova-plugin-mfp@8.0.2020052707",
-  "_where": "/Users/1539722/Code/hf-wrapper/hma",
+  "_resolved": "https://registry.npmjs.org/cordova-plugin-mfp/-/cordova-plugin-mfp-8.0.2020090704.tgz",
+  "_shasum": "b5b7918e36295c9aa2c14d0791619037dd985b57",
+  "_spec": "cordova-plugin-mfp@8.0.2020090704",
+  "_where": "/Users/1539722/Code/flma/DelhaizefoodLionApp",
   "author": {
     "name": "IBM"
   },
@@ -56,7 +68,7 @@
     ]
   },
   "dependencies": {
-    "archiver": "0.20.0",
+    "archiver": "4.0.2",
     "cordova-serve": "^1.0.0",
     "crc": "^3.4.0",
     "elementtree": "0.1.6",
@@ -113,5 +125,5 @@
     "type": "git",
     "url": "https://git.ng.bluemix.net/ibmmfpf/cordova-plugin-mfp/tree/master"
   },
-  "version": "8.0.2020052707"
+  "version": "8.0.2020090704"
 }

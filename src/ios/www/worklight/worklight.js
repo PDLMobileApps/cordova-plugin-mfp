@@ -10459,9 +10459,9 @@ function WLResourceRequest(_url, _method, _options) {
         }
 
         function __buildUrl(serverUrl) {
-            if (serverUrl[serverUrl.length - 1] !== '/' && url[0] !== '/') {
+            if (serverUrl[serverUrl.length - 1] !== '/' && url[0] !== '/' && url.length!==0) {
                 serverUrl += '/';
-            } else if (serverUrl[serverUrl.length - 1] === '/' && url[0] === '/') {
+            } else if (serverUrl[serverUrl.length - 1] === '/' && (url[0] === '/' || url.length===0)) {
                 serverUrl = serverUrl.substring(0, serverUrl.length - 1);
             }
             console.log ('Using URL for request ' + (serverUrl + url));
@@ -10782,11 +10782,15 @@ WL.__DirectUpdateManager = (function() {
 
 	function startUpdate(data, listener) {
 		var _this = this;
+		if(typeof data.DirectUpdateProtocolVersion == "undefined") {
+			// No protocol version is set in the server. Manually setting it to v1.
+			data.DirectUpdateProtocolVersion = "v1";
+		}
 
 		cordova.exec(onDirectUpdateSuccess, function(result){
 			onDirectUpdateFailure.call(_this, result);
 		},
-				"WLDirectUpdatePlugin", "start", [ data.checksum,data.packedSize, data.unpackedSize,data.directUpdateLink ]);
+				"WLDirectUpdatePlugin", "start", [ data.checksum, data.packedSize, data.unpackedSize, data.directUpdateLink, data.DirectUpdateProtocolVersion]);
 
 		function onDirectUpdateSuccess(result) {
 			logger.trace('DirectUpdateManager.startUpdate.onDirectUpdateSuccess: ' + JSON.stringify(result));

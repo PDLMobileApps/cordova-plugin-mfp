@@ -10663,9 +10663,9 @@ function WLResourceRequest(_url, _method, _options) {
         }
 
         function __buildUrl(serverUrl) {
-            if (serverUrl[serverUrl.length - 1] !== '/' && url[0] !== '/') {
+            if (serverUrl[serverUrl.length - 1] !== '/' && url[0] !== '/' && url.length!==0) {
                 serverUrl += '/';
-            } else if (serverUrl[serverUrl.length - 1] === '/' && url[0] === '/') {
+            } else if (serverUrl[serverUrl.length - 1] === '/' && (url[0] === '/' || url.length===0)) {
                 serverUrl = serverUrl.substring(0, serverUrl.length - 1);
             }
             console.log ('Using URL for request ' + (serverUrl + url));
