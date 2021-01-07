@@ -1,0 +1,18 @@
+Replaced iOS framework with xcframework:
+- Go to cordova-plugin-mfp/src/ios/Frameworks
+
+- Execute scripts/ios/xcframeworkconversion.sh
+
+- Delete IBMMobileFirstPlatformFoundation.framework
+
+- Edit plugin.xml and replace iOS framework with xcframework: <framework custom="true" src="src/ios/Frameworks/IBMMobileFirstPlatformFoundation.xcframework" />
+
+- Edit hooks/ios/ios-after-prepare.js and replace each occurrence of IBMMobileFirstPlatformFoundation.framework with IBMMobileFirstPlatformFoundation.xcframework
+
+
+
+Modified plugin.xml:
+- Increased Cordova-android max version as in: <engine name="cordova-android" version="&gt;=6.1.2 &lt;10" />
+
+- Increased cordova-ios max version as in: <engine name="cordova-ios" version="&gt;=4.1.1 &lt;7" />
+

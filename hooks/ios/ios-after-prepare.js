@@ -314,7 +314,7 @@ function IOSAfterPrepare(projectDirectory) {
             appProj.parseSync();
 
             //first remove so they aren't duplicated
-            appProj.removeFramework(path.join(projName, 'Plugins', 'cordova-plugin-mfp', 'IBMMobileFirstPlatformFoundation.framework'), {customFramework: true});
+            appProj.removeFramework(path.join(projName, 'Plugins', 'cordova-plugin-mfp', 'IBMMobileFirstPlatformFoundation.xcframework'), {customFramework: true});
 
             //add the Embed Frameworks Build Phase to the project if it doesn't already exist
             if (appProj.pbxEmbedFrameworksBuildPhaseObj(appProj.getFirstTarget().uuid) == null) {
@@ -322,7 +322,7 @@ function IOSAfterPrepare(projectDirectory) {
             }
 
             //add the frameworks to the Embed Frameworks Build Phase
-            appProj.addFramework(path.join(projName, 'Plugins', 'cordova-plugin-mfp', 'IBMMobileFirstPlatformFoundation.framework'), {customFramework: true, embed: true, sign: true});
+            appProj.addFramework(path.join(projName, 'Plugins', 'cordova-plugin-mfp', 'IBMMobileFirstPlatformFoundation.xcframework'), {customFramework: true, embed: true, sign: true});
 
             //temporary fix
             //remove and re-add non-embedded frameworks that get added to embedded section when removing and re-adding plugin
